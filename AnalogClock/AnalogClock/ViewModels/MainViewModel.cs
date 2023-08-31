@@ -8,23 +8,36 @@ public class MainViewModel : ViewModelBase
 {
     private Timer _timer;
 
-    #region Время
+    #region Время (подгоричное)
 
-    private DateTime _time;
+    private DateTime _timePodgorica;
 
-
-    public DateTime Time
+    public DateTime TimePodgorica
     {
-        get => _time;
+        get => _timePodgorica;
 
-        set => this.RaiseAndSetIfChanged(ref _time, value);
+        set => this.RaiseAndSetIfChanged(ref _timePodgorica, value);
+    }
+
+    #endregion
+
+    #region Время (московское)
+
+    private DateTime _timeMoscow;
+
+    public DateTime TimeMoscow
+    {
+        get => _timeMoscow;
+
+        set => this.RaiseAndSetIfChanged(ref _timeMoscow, value);
     }
 
     #endregion
 
     public MainViewModel()
     {
-        Time = DateTime.Now;
+        TimePodgorica = GetPodgoricaTime();
+        TimeMoscow = GetMoscowTime();
 
         _timer = new Timer(1000);
         _timer.Elapsed += UpdateTime;
@@ -34,6 +47,23 @@ public class MainViewModel : ViewModelBase
 
     private void UpdateTime(Object source, ElapsedEventArgs e)
     {
-        Time = DateTime.Now;
+        TimePodgorica = GetPodgoricaTime();
+        TimeMoscow = GetMoscowTime();
+    }
+
+    /// <summary>
+    /// Метод возвращает подгоричное время
+    /// </summary>
+    private DateTime GetPodgoricaTime()
+    {
+        return DateTime.UtcNow.AddHours(2);
+    }
+
+    /// <summary>
+    /// Метод возвращает московское время
+    /// </summary>
+    private DateTime GetMoscowTime()
+    {
+        return DateTime.UtcNow.AddHours(3);
     }
 }

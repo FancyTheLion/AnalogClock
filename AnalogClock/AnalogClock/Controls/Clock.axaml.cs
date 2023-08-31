@@ -223,9 +223,9 @@ namespace AnalogClock.Controls
                 throw new ArgumentOutOfRangeException("R1 не может быть отрицательным!", nameof(r1));
             }
 
-            if (r2 <= r1)
+            if (r2 < r1)
             {
-                throw new ArgumentOutOfRangeException("R2 должен быть больше, чем R1!", nameof(r2));
+                throw new ArgumentOutOfRangeException("R2 должен быть больше или равен R1!", nameof(r2));
             }
 
             if (t < 0 || t > 2 * Math.PI)

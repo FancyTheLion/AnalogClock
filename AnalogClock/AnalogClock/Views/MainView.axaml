@@ -15,9 +15,28 @@
     <vm:MainViewModel />
     </Design.DataContext>
 
-	<controls:Clock
-		Time="{ Binding Time }">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<controls:Clock
+			Grid.Column="0"
+			Grid.Row="0"
+			Time="{ Binding TimePodgorica }">
+		</controls:Clock>
+
+		<controls:Clock
+			Grid.Column="0"
+			Grid.Row="1"
+			Time="{ Binding TimeMoscow }">
+		</controls:Clock>
 		
-	</controls:Clock>
+	</Grid>
 	
 </UserControl>
