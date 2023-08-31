@@ -20,6 +20,6 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        Time = new DateTime(2023, 08, 29, 13, 37, 50);
+        Time = new DateTime(2023, 08, 29, 13, 59, 35);
     }
 }
