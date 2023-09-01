@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:ThermometrApp.ViewModels"
+			 xmlns:controls="clr-namespace:ThermometrApp.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ThermometrApp.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -18,43 +19,31 @@
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<Label
+
+		<controls:ThermomtrControl
 			Grid.Column="0"
 			Grid.Row="0"
-			Content="{ Binding MaxTemperature }">
-		</Label>
-
-
-		<Label
-			Grid.Column="0"
-			Grid.Row="1"
-			Content="{ Binding CurrentTemperature }">
-		</Label>
-
+			MinTemperature="{ Binding MinTemperature }"
+			MaxTemperature="{ Binding MaxTemperature }"
+			CurrentTemperature="{ Binding CurrentTemperature }">
+			
+		</controls:ThermomtrControl>
 		
-		<Label
-			Grid.Column="0"
-			Grid.Row="2"
-			Content="{ Binding MinTemperature }">
-		</Label>
-
 		<Button
 			Grid.Column="0"
-			Grid.Row="3"
+			Grid.Row="1"
 			Command="{ Binding IncreaseTemperatureCommand }">
 			Increase
 		</Button>
 
 		<Button
 			Grid.Column="0"
-			Grid.Row="4"
+			Grid.Row="2"
 			Command="{ Binding DecreaseTemperatureCommand }">
 			Decrease
 		</Button>
