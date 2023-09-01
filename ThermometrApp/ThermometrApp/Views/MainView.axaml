@@ -26,6 +26,8 @@
 
 
 		<controls:ThermomtrControl
+			Width="100"
+			VerticalAlignment="Stretch"
 			Grid.Column="0"
 			Grid.Row="0"
 			MinTemperature="{ Binding MinTemperature }"
