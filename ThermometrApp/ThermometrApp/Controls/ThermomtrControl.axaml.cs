@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using System;
+using System.Globalization;
 
 namespace ThermometrApp.Controls
 {
@@ -17,6 +18,11 @@ namespace ThermometrApp.Controls
         /// Полуширина трубки термометра
         /// </summary>
         private const double PipeHalfWidth = 5;
+
+        /// <summary>
+        /// Полудлинна чёрточки
+        /// </summary>
+        private const double NotchHalfWidth = 30;
 
         #region Биндимые свойства
 
@@ -111,14 +117,30 @@ namespace ThermometrApp.Controls
         private double _rulerBottomY;
 
         /// <summary>
-        /// Левая верхняя точка шкалы термометра
+        /// Левая координата границы трубки термометра
         /// </summary>
         private double _pipeLeft;
 
         /// <summary>
-        /// Права нижняя точка шкалы термометра
+        /// Правая координата трубки термометра
         /// </summary>
         private double _pipeRight;
+
+        /// <summary>
+        /// Позиция верхней границы жидкости
+        /// </summary>
+        private int _liquidTopY;
+
+        /// <summary>
+        /// Левая X-координата чёрточки
+        /// </summary>
+        private double _notchLeft;
+
+        /// <summary>
+        /// Правая X-координата чёрточки
+        /// </summary>
+        private double _notchRight;
+
 
         #endregion
 
@@ -144,6 +166,7 @@ namespace ThermometrApp.Controls
         /// </summary>
         private void HandlMinTemperatureChanged(AvaloniaObject sender, double minTemperature)
         {
+            CalculateCurrentTemperatureLiquidLevel();
             InvalidateVisual(); // Этот метод заставляет контрол перерисовать себя
         }
 
@@ -152,6 +175,7 @@ namespace ThermometrApp.Controls
         /// </summary>
         private void HandlMaxTemperatureChanged(AvaloniaObject sender, double maxTemperature)
         {
+            CalculateCurrentTemperatureLiquidLevel();
             InvalidateVisual(); // Этот метод заставляет контрол перерисовать себя
         }
 
@@ -160,6 +184,7 @@ namespace ThermometrApp.Controls
         /// </summary>
         private void HandlCurrentTemperatureChanged(AvaloniaObject sender, double currentTemperature)
         {
+            CalculateCurrentTemperatureLiquidLevel();
             InvalidateVisual(); // Этот метод заставляет контрол перерисовать себя
         }
 
@@ -179,6 +204,11 @@ namespace ThermometrApp.Controls
 
             _pipeLeft = _middleX - PipeHalfWidth;
             _pipeRight = _middleX + PipeHalfWidth;
+
+            _notchLeft = _middleX - NotchHalfWidth;
+            _notchRight = _middleX + NotchHalfWidth;
+
+            CalculateCurrentTemperatureLiquidLevel();
         }
 
         /// <summary>
@@ -218,11 +248,73 @@ namespace ThermometrApp.Controls
                 Radius
             );
 
+            // Рисуем чёрточки
+            for (double notchTemperature = MinTemperature; notchTemperature <= MaxTemperature; notchTemperature ++)
+            {
+                DrawNotch(context, notchTemperature);
+            }
+
+            // Рисую заполнение шкалы температуры (в зависимости от 3 величин температуры)
+            context.DrawRectangle
+            (
+                new SolidColorBrush(Colors.Red),
+                new Pen(new SolidColorBrush(Colors.Red)),
+                new Rect(new Point(_pipeLeft, _liquidTopY), new Point(_pipeRight, _rulerBottomY))
+            );
+
             // Рисуем пустую трубку
             context.DrawRectangle
             (
                 new Pen(new SolidColorBrush(Colors.Black)),
                 new Rect(new Point(_pipeLeft, 0), new Point(_pipeRight, _rulerBottomY))
+            );
+        }
+
+        private void CalculateCurrentTemperatureLiquidLevel()
+        {
+            _liquidTopY = CalculateLiquidTopLevelY(CurrentTemperature);
+        }
+
+        private int CalculateLiquidTopLevelY(double temperature)
+        {
+            double a = _rulerBottomY / (MinTemperature - MaxTemperature);
+            double b = -1 * _rulerBottomY * MaxTemperature / (MinTemperature - MaxTemperature);
+
+            return (int)Math.Floor(a * temperature + b + 0.5);
+        }
+
+        private void DrawNotch(DrawingContext context, double notchTemperature)
+        {
+
+            int topLevelY = CalculateLiquidTopLevelY(notchTemperature);
+
+            Point rightNotchPoint = new Point(_notchRight, topLevelY);
+
+            context.DrawLine
+            (
+                new Pen(new SolidColorBrush(Colors.Black), 1),
+                new Point(_notchLeft, topLevelY),
+                rightNotchPoint
+            );
+
+            context.DrawText
+            (
+                new FormattedText
+                (
+                    $"{notchTemperature}",
+                    CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight,
+                    new Typeface
+                    (
+                        FontFamily.Default,
+                        FontStyle.Italic,
+                        FontWeight.Light,
+                        FontStretch.Condensed
+                        ),
+                    19,
+                    new SolidColorBrush(Colors.Black)
+                ),
+                rightNotchPoint
             );
         }
     }
